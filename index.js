@@ -6,17 +6,13 @@ const example = require('./input.json')
 
 function parse (item, toFind = 'steps', propName = 'name') {
   let found = []
-  if (Array.isArray(item)) item.flatMap(k => [...parse(k, toFind, propName)])
-  if (typeof item === 'object') {
-    for (let key in item) {
-      if (key === toFind) found.push(...gatherElements(item[key], propName))
-      if (typeof item[key] === 'object' || Array.isArray(item[key]))
-        found.push(...parse(item[key], toFind, propName))
-    }
+  for (let key in item) {
+    if (key === toFind) found.push(...item[key].flatMap(el => el[propName]))
+    if (typeof item[key] === 'object' || Array.isArray(item[key]))
+      found.push(...parse(item[key], toFind, propName))
   }
   return [...found]
 }
-const gatherElements = (arr, propName) => arr.flatMap(el => el[propName])
 
 console.log(parse(example, 'steps', 'name'))
 console.log(parse(example, 'steps', 'type'))
